@@ -1,0 +1,7 @@
+Pattern : chaine de commande
+Langage : java
+lib : libgdx
+
+Idée 1 :
+2D
+1 écran (une salle)

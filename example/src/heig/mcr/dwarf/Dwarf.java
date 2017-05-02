@@ -1,14 +1,15 @@
 package heig.mcr.dwarf;
 
 import heig.mcr.Rock;
+import heig.mcr.RockHandler;
 
 /**
  * Project : example
  * Author(s) : Antoine Friant
  * Date : 26.04.17
  */
-public abstract class Dwarf {
-    protected Dwarf next;
+public abstract class Dwarf implements RockHandler {
+    protected RockHandler next;
 
     public abstract String getName();
     protected abstract boolean work(Rock rock);

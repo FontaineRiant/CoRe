@@ -12,6 +12,7 @@ public class Star {
     private static float SPEED = 500;
     private static float BASE_SIZE = 3;
     private static Texture texture = new Texture(Gdx.files.internal("stardot.png"));
+    private static Random random = new Random();
     private Sprite sprite = new Sprite(texture);
     private float x;
     private float y;
@@ -19,14 +20,13 @@ public class Star {
 
     public Star() {
         init();
-        x = (x - Gdx.graphics.getWidth()) * 2;
+        x = random.nextFloat() * Gdx.graphics.getWidth();
     }
 
     private void init() {
-        Random r = new Random();
-        x = (r.nextFloat()+1) * Gdx.graphics.getWidth();
-        y = r.nextFloat() * Gdx.graphics.getHeight();
-        scale = r.nextFloat();
+        x = Gdx.graphics.getWidth();
+        y = random.nextFloat() * Gdx.graphics.getHeight();
+        scale = random.nextFloat();
 
         sprite.setSize(scale * BASE_SIZE, scale * BASE_SIZE);
         sprite.setOriginCenter();

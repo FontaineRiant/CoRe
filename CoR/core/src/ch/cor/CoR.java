@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CoR extends ApplicationAdapter {
-    private static int STAR_COUNT = 1000;
+    private static int STAR_COUNT = 500;
     SpriteBatch batch;
     Texture img;
     Player player;

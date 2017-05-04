@@ -5,3 +5,21 @@ lib : libgdx
 Idée 1 :
 2D
 1 écran (une salle)
+
+
+Idée 2 :
+Shoot'em up
+
+Ennemis colorés (primaires : rouge jaune bleu, secondaires : orange, vert, violet)
+Le joueur tire un laser d'une couleur (choisie avec les touches A, S, D, tiré avec espace). A et S font de l'orange, ...
+A+S+D fait du noir et n'a aucun effet.
+
+Un ennemi touché par sa couleur (exacte) explose, ajoute une couleur au laser et fait rebondir le tir sur l'ennemi le plus proche.
+
+Un ennemi touché par une couleur qui inclus la sienne (rouge touché par orange) explose et fait rebondir le tir sur l'ennemi le plus proche.
+
+Un ennemi touché par un tir blanc (toutes les couleurs) explose ne fait pas rebondir le tir.
+
+Un ennemi touché par un tir d'une couleur non incluse dans la sienne n'explose pas et ne fait pas rebondir le tir.
+
+Les rebonds constituent la chaine de responsabilité. Le successeur est défini au moment où une requête est reçue (c-à-d l'entité se fait toucher).

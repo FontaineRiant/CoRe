@@ -8,51 +8,54 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class CoR extends ApplicationAdapter {
-    private static int STAR_COUNT = 500;
-    SpriteBatch batch;
-    Texture img;
-    Player player;
-    ArrayList<Star> stars;
+    private static int STAR_COUNT = 1000;
+    private SpriteBatch batch;
+    private LinkedList<LiveDrawable> drawables;
+    private RockManager rockManager;
 
     @Override
     public void create() {
         Random r = new Random();
         batch = new SpriteBatch();
-        player = new Player(100, Gdx.graphics.getHeight()/2);
+        rockManager = new RockManager();
+        drawables = new LinkedList<LiveDrawable>();
 
-        stars = new ArrayList<Star>();
+        drawables.add(rockManager);
+        drawables.add(new Player(100, Gdx.graphics.getHeight()/2));
         for(int i = 0; i < STAR_COUNT; i++) {
-            stars.add(new Star());
+            drawables.addFirst(new Star());
         }
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 0.1f);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.15f, 0.1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        for(Star st : stars) {
-            st.update();
+        ArrayList<LiveDrawable> toBeDeleted = new ArrayList<LiveDrawable>();
+        for(LiveDrawable ld : drawables) {
+            ld.update();
+            if(ld.isOut()) {
+                toBeDeleted.add(ld);
+            }
         }
-
-
-        player.update();
+        // retire les élément qui sortent de l'écran
+        drawables.removeAll(toBeDeleted);
 
         // draw le batch (tout en une fois, entre batch.begin() et batch.end() pour les performances)
         batch.begin();
-        for(Star st : stars) {
-            st.draw(batch);
+        for(LiveDrawable ld : drawables) {
+            ld.draw(batch);
         }
-        player.draw(batch);
         batch.end();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        player.dispose();
     }
 }

@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import java.util.Random;
 
-public class Star {
-    private static float SPEED = 500;
+public class Star implements LiveDrawable {
+    private static float SPEED = 750;
     private static float BASE_SIZE = 3;
     private static Texture texture = new Texture(Gdx.files.internal("stardot.png"));
     private static Random random = new Random();
@@ -32,6 +32,7 @@ public class Star {
         sprite.setOriginCenter();
     }
 
+    @Override
     public void update() {
         x -= SPEED * scale * Gdx.graphics.getDeltaTime();
         if(x < -sprite.getWidth()) {
@@ -40,19 +41,18 @@ public class Star {
         sprite.setPosition(x, y);
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public float getScale() {
-        return scale;
-    }
-
+    @Override
     public void draw(Batch batch) {
         sprite.draw(batch);
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Override
+    public boolean isOut() {
+        return false;
     }
 }

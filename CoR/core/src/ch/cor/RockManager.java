@@ -1,10 +1,8 @@
 package ch.cor;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,7 +12,7 @@ import java.util.Random;
  * Date : 05.05.17
  */
 public class RockManager implements LiveDrawable {
-    private float spawnRate = 0.2f; // secondes entre de apparitions
+    private float spawnRate = 0.1f; // secondes entre les apparitions
     private float timeSinceLastSpawn = 0f;
     private ArrayList<Rock> rocks;
     private Random random;
@@ -29,15 +27,17 @@ public class RockManager implements LiveDrawable {
     public void update() {
         timeSinceLastSpawn += Gdx.graphics.getDeltaTime();
 
-        if(timeSinceLastSpawn > spawnRate) {
-            rocks.add(new Rock(Gdx.graphics.getWidth(), random.nextFloat()*Gdx.graphics.getHeight(), Color.BROWN));
+        if (timeSinceLastSpawn > spawnRate) {
+            rocks.add(new Rock(Gdx.graphics.getWidth(),
+                    random.nextFloat() * Gdx.graphics.getHeight(),
+                    ColorUtils.getRandomNonBlackOrWhiteColor(), this));
             timeSinceLastSpawn = 0;
         }
 
         ArrayList<Rock> toBeDeleted = new ArrayList<Rock>();
-        for(Rock rock : rocks) {
+        for (Rock rock : rocks) {
             rock.update();
-            if(rock.isOut()) {
+            if (rock.isOut()) {
                 toBeDeleted.add(rock);
             }
         }
@@ -47,7 +47,7 @@ public class RockManager implements LiveDrawable {
 
     @Override
     public void draw(Batch batch) {
-        for(Rock rock : rocks) {
+        for (Rock rock : rocks) {
             rock.draw(batch);
         }
     }
@@ -57,8 +57,25 @@ public class RockManager implements LiveDrawable {
 
     }
 
+    public Rock getNearest(float x, float y) {
+        Rock nearest = null;
+        float distance = Float.MAX_VALUE;
+        for (Rock rock : rocks) {
+            float tempDistance = rock.getPos().dst2(x, y);
+            if (distance > tempDistance && !rock.isOut()) {
+                nearest = rock;
+                distance = tempDistance;
+            }
+        }
+        return nearest;
+    }
+
     @Override
     public boolean isOut() {
         return false;
+    }
+
+    public ArrayList<Rock> getRocks() {
+        return rocks;
     }
 }

@@ -2,7 +2,6 @@ package ch.cor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -24,13 +23,15 @@ public class Player implements LiveDrawable {
     private final static int LEFT_KEY = Input.Keys.A;
     private final static int RIGHT_KEY = Input.Keys.D;
 
+    private RockManager rockManager;
     private float timeSinceLastShot = 0;
     private float x, y;
     private Sprite sprite = new Sprite(new Texture(Gdx.files.internal("ship.png")));
     private Vector2 vector = new Vector2();
     private ArrayList<Shot> shots = new ArrayList<Shot>();
 
-    public Player(float x, float y) {
+    public Player(float x, float y, RockManager rockManager) {
+        this.rockManager = rockManager;
         this.x = x;
         this.y = y;
         sprite.setSize(SIZE, SIZE);
@@ -51,6 +52,13 @@ public class Player implements LiveDrawable {
     @Override
     public void update() {
         float deltaTime = Gdx.graphics.getDeltaTime();
+
+        // Mort
+        for(Rock rock : rockManager.getRocks()) {
+            if (sprite.getBoundingRectangle().overlaps(rock.getBounds())) {
+                System.exit(0);
+            }
+        }
 
         // Inputs de déplacements
         if (Gdx.input.isKeyPressed(RIGHT_KEY)) {
@@ -103,29 +111,33 @@ public class Player implements LiveDrawable {
 
         // Tirs
         timeSinceLastShot += Gdx.graphics.getDeltaTime();
+
+        ArrayList<Shot> toBeDeleted = new ArrayList<Shot>();
         for(Shot sh : shots) {
             sh.update();
+            if(sh.isOut()) {
+                toBeDeleted.add(sh);
+            }
         }
+
+        shots.removeAll(toBeDeleted);
+
         if((Gdx.input.isKeyPressed(RED_KEY) || Gdx.input.isKeyPressed(YELLOW_KEY) || Gdx.input.isKeyPressed(BLUE_KEY))
                 && timeSinceLastShot >= RATE_OF_FIRE) {
-            Color color = new Color();
-            if(Gdx.input.isKeyPressed(RED_KEY) && Gdx.input.isKeyPressed(YELLOW_KEY) && Gdx.input.isKeyPressed(BLUE_KEY)) {
-                color.set(Color.BLACK);
-            } else if(Gdx.input.isKeyPressed(RED_KEY) && Gdx.input.isKeyPressed(YELLOW_KEY)) {
-                color.set(Color.ORANGE);
-            } else if(Gdx.input.isKeyPressed(RED_KEY) && Gdx.input.isKeyPressed(BLUE_KEY)) {
-                color.set(Color.VIOLET);
-            } else if(Gdx.input.isKeyPressed(BLUE_KEY) && Gdx.input.isKeyPressed(YELLOW_KEY)) {
-                color.set(Color.GREEN);
-            } else if(Gdx.input.isKeyPressed(RED_KEY)) {
-                color.set(Color.RED);
-            } else if(Gdx.input.isKeyPressed(YELLOW_KEY)) {
-                color.set(Color.YELLOW);
-            } else if(Gdx.input.isKeyPressed(BLUE_KEY)) {
-                color.set(Color.CYAN);
+            ColorUtils.Color color = ColorUtils.Color.WHITE;
+            if(Gdx.input.isKeyPressed(RED_KEY)) {
+                color = ColorUtils.add(color, ColorUtils.Color.RED);
             }
 
-            shots.add(new Shot(x + SIZE, y + SIZE/2, color));
+            if(Gdx.input.isKeyPressed(YELLOW_KEY)) {
+                color = ColorUtils.add(color, ColorUtils.Color.YELLOW);
+            }
+
+            if(Gdx.input.isKeyPressed(BLUE_KEY)) {
+                color = ColorUtils.add(color, ColorUtils.Color.BLUE);
+            }
+
+            shots.add(new Shot(x + SIZE, y + SIZE /2, color, rockManager));
             timeSinceLastShot = 0;
         }
 

@@ -62,7 +62,7 @@ public class RockManager implements LiveDrawable {
         float distance = Float.MAX_VALUE;
         for (Rock rock : rocks) {
             float tempDistance = rock.getPos().dst2(x, y);
-            if (distance > tempDistance && !rock.isOut()) {
+            if (distance > tempDistance && !rock.isExploding()) {
                 nearest = rock;
                 distance = tempDistance;
             }

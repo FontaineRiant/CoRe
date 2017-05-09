@@ -23,6 +23,7 @@ public class Player implements LiveDrawable {
     private final static int LEFT_KEY = Input.Keys.A;
     private final static int RIGHT_KEY = Input.Keys.D;
 
+    private boolean dead = false;
     private RockManager rockManager;
     private float timeSinceLastShot = 0;
     private float x, y;
@@ -54,16 +55,16 @@ public class Player implements LiveDrawable {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         // Mort
-        for(Rock rock : rockManager.getRocks()) {
-            if (sprite.getBoundingRectangle().overlaps(rock.getBounds())) {
-                System.exit(0);
+        for (Rock rock : rockManager.getRocks()) {
+            if (sprite.getBoundingRectangle().overlaps(rock.getBounds()) && !rock.isExploding()) {
+                dead =true;
             }
         }
 
         // Inputs de déplacements
         if (Gdx.input.isKeyPressed(RIGHT_KEY)) {
             vector.x += deltaTime * ACCELERATION;
-        } else if (vector.x > 0){
+        } else if (vector.x > 0) {
             vector.x = applyInertia(vector.x);
         }
 
@@ -75,13 +76,13 @@ public class Player implements LiveDrawable {
 
         if (Gdx.input.isKeyPressed(UP_KEY)) {
             vector.y += deltaTime * ACCELERATION;
-        } else if(vector.y > 0) {
+        } else if (vector.y > 0) {
             vector.y = applyInertia(vector.y);
         }
 
         if (Gdx.input.isKeyPressed(DOWN_KEY)) {
             vector.y -= deltaTime * ACCELERATION;
-        } else if(vector.y < 0) {
+        } else if (vector.y < 0) {
             vector.y = applyInertia(vector.y);
         }
 
@@ -113,31 +114,31 @@ public class Player implements LiveDrawable {
         timeSinceLastShot += Gdx.graphics.getDeltaTime();
 
         ArrayList<Shot> toBeDeleted = new ArrayList<Shot>();
-        for(Shot sh : shots) {
+        for (Shot sh : shots) {
             sh.update();
-            if(sh.isOut()) {
+            if (sh.isOut()) {
                 toBeDeleted.add(sh);
             }
         }
 
         shots.removeAll(toBeDeleted);
 
-        if((Gdx.input.isKeyPressed(RED_KEY) || Gdx.input.isKeyPressed(YELLOW_KEY) || Gdx.input.isKeyPressed(BLUE_KEY))
+        if ((Gdx.input.isKeyPressed(RED_KEY) || Gdx.input.isKeyPressed(YELLOW_KEY) || Gdx.input.isKeyPressed(BLUE_KEY))
                 && timeSinceLastShot >= RATE_OF_FIRE) {
             ColorUtils.Color color = ColorUtils.Color.WHITE;
-            if(Gdx.input.isKeyPressed(RED_KEY)) {
+            if (Gdx.input.isKeyPressed(RED_KEY)) {
                 color = ColorUtils.add(color, ColorUtils.Color.RED);
             }
 
-            if(Gdx.input.isKeyPressed(YELLOW_KEY)) {
+            if (Gdx.input.isKeyPressed(YELLOW_KEY)) {
                 color = ColorUtils.add(color, ColorUtils.Color.YELLOW);
             }
 
-            if(Gdx.input.isKeyPressed(BLUE_KEY)) {
+            if (Gdx.input.isKeyPressed(BLUE_KEY)) {
                 color = ColorUtils.add(color, ColorUtils.Color.BLUE);
             }
 
-            shots.add(new Shot(x + SIZE, y + SIZE /2, color, rockManager));
+            shots.add(new Shot(x + SIZE, y + SIZE / 2, color, rockManager));
             timeSinceLastShot = 0;
         }
 
@@ -150,12 +151,12 @@ public class Player implements LiveDrawable {
 
     @Override
     public boolean isOut() {
-        return false;
+        return dead;
     }
 
     @Override
     public void draw(Batch batch) {
-        for(Shot sh : shots) {
+        for (Shot sh : shots) {
             sh.draw(batch);
         }
         sprite.draw(batch);

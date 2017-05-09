@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Shot implements LiveDrawable {
     private static float SPEED = 1500;
-    private static Vector2 SIZE = new Vector2(32, 16);
+    private static Vector2 SIZE = new Vector2(64, 32);
     private static Texture texture = new Texture(Gdx.files.internal("shot.png"));
     private boolean homing = false;
     private Rock target;
@@ -64,7 +64,7 @@ public class Shot implements LiveDrawable {
         position.y += vector.y * Gdx.graphics.getDeltaTime() * SPEED;
 
         for (Rock rock : rockManager.getRocks()) {
-            if (rock.getBounds().overlaps(sprite.getBoundingRectangle()) && !rock.isOut()) {
+            if (rock.getBounds().overlaps(sprite.getBoundingRectangle()) && !rock.isExploding()) {
                 homing = false;
                 rock.handleShot(this);
                 break;

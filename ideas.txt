@@ -23,3 +23,8 @@ Un ennemi touché par un tir blanc (toutes les couleurs) explose ne fait pas reb
 Un ennemi touché par un tir d'une couleur non incluse dans la sienne n'explose pas et ne fait pas rebondir le tir.
 
 Les rebonds constituent la chaine de responsabilité. Le successeur est défini au moment où une requête est reçue (c-à-d l'entité se fait toucher).
+
+
+VALID DE L'ASSISTANT :
+La chaine s'exécute en un seul tick (=> next.handleShot(shot))
+Il doit y avoir 3 cas de figure dans le handle : je passe sans modifier la requête, je stop la chaine, je modifie et je passe.

@@ -1,10 +1,5 @@
 package heig.mcr;
 
-/**
- * Project : example
- * Author(s) : Antoine Friant
- * Date : 26.04.17
- */
 public class Rock {
     private boolean found;
     private boolean polished;

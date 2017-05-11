@@ -2,11 +2,6 @@ package heig.mcr.dwarf;
 
 import heig.mcr.Rock;
 
-/**
- * Project : example
- * Author(s) : Antoine Friant
- * Date : 26.04.17
- */
 public class BankerDwarf extends Dwarf {
     @Override
     public String getName() {

@@ -3,11 +3,6 @@ package heig.mcr.dwarf;
 import heig.mcr.Rock;
 import heig.mcr.RockHandler;
 
-/**
- * Project : example
- * Author(s) : Antoine Friant
- * Date : 26.04.17
- */
 public abstract class Dwarf implements RockHandler {
     protected RockHandler next;
 

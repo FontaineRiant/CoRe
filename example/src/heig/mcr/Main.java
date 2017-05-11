@@ -17,16 +17,19 @@ public class Main {
         Dwarf jeweller = new JewellerDwarf();
         Dwarf banker = new BankerDwarf();
 
+        System.out.println("Digger -> Jeweller -> Banker");
         digger.setNext(jeweller);
         jeweller.setNext(banker);
 
         digger.handleRock(new Rock());
 
+        System.out.println("Digger -> Banker");
         digger.setNext(banker);
         banker.setNext(null);
 
         digger.handleRock(new Rock());
 
+        System.out.println("Jeweller -> Banker");
         jeweller.handleRock(new Rock());
     }
 }

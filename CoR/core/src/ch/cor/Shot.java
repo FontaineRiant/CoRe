@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
  * Date : 05.05.17
  */
 public class Shot implements LiveDrawable {
-    private static float SPEED = 1500;
+    private static float SPEED = 1000;
     private static Vector2 SIZE = new Vector2(64, 32);
     private static Texture texture = new Texture(Gdx.files.internal("shot.png"));
     private boolean homing = false;

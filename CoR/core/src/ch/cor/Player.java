@@ -14,7 +14,7 @@ public class Player implements LiveDrawable {
     private final static float ACCELERATION = 5000; // pixels/sec^2
     private final static float INERTIA = 3000; // pixels/sec^2
     private final static float SIZE = 40;
-    private final static float RATE_OF_FIRE = 0.1f; // secondes entre 2 tirs
+    private final static float RATE_OF_FIRE = 0.15f; // secondes entre 2 tirs
     private final static int RED_KEY = Input.Keys.J;
     private final static int YELLOW_KEY = Input.Keys.K;
     private final static int BLUE_KEY = Input.Keys.L;

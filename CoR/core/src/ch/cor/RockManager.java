@@ -12,7 +12,7 @@ import java.util.Random;
  * Date : 05.05.17
  */
 public class RockManager implements LiveDrawable {
-    private float spawnRate = 0.1f; // secondes entre les apparitions
+    private float spawnRate = 0.2f; // secondes entre les apparitions
     private float timeSinceLastSpawn = 0f;
     private ArrayList<Rock> rocks;
     private Random random;

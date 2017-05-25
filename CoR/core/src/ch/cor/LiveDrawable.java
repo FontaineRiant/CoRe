@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
  * Date : 05.05.17
  */
 public interface LiveDrawable {
-
     public void update();
     public void draw(Batch batch);
     public void dispose();

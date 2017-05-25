@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class CoR extends ApplicationAdapter {
-    private static int STAR_COUNT = 1000;
+    private static final int STAR_COUNT = 1000;
+    public static int points;
     private boolean paused = false;
     private SpriteBatch batch;
     private LinkedList<LiveDrawable> drawables;
@@ -21,12 +23,16 @@ public class CoR extends ApplicationAdapter {
     private ArrayList<Music> playList;
     private int musicIndex;
     private Random random = new Random();
+    private BitmapFont font;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         rockManager = new RockManager();
         drawables = new LinkedList<LiveDrawable>();
+
+        font = new BitmapFont();
+        points = 0;
 
         drawables.add(new Player(100, Gdx.graphics.getHeight() / 2, rockManager));
         drawables.add(rockManager);
@@ -55,7 +61,7 @@ public class CoR extends ApplicationAdapter {
             paused = !paused;
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             playList.get(musicIndex).stop();
             create();
         }
@@ -81,6 +87,20 @@ public class CoR extends ApplicationAdapter {
         batch.begin();
         for (LiveDrawable ld : drawables) {
             ld.draw(batch);
+        }
+        // affichage du score
+        font.draw(batch, "Score : " + points, 5, Gdx.graphics.getHeight() - 5);
+        if (paused) {
+            // affichage du menu pause
+            font.draw(batch,
+                    "PAUSED\n\n" +
+                            "Controls :\n" +
+                            "Pause/unpause : SPACEBAR\n" +
+                            "Restart : R\n" +
+                            "Movement : W, A, S, D\n" +
+                            "Red : J\n" +
+                            "Yellow : K\n" +
+                            "Blue : L\n", Gdx.graphics.getWidth()/2 - 150, Gdx.graphics.getHeight()/2 + font.getLineHeight() * 5);
         }
         batch.end();
     }

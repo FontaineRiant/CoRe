@@ -12,72 +12,65 @@ import com.badlogic.gdx.math.Vector2;
  * Date : 05.05.17
  */
 public class Shot implements LiveDrawable {
-    private static float SPEED = 1000;
-    private static Vector2 SIZE = new Vector2(64, 32);
+    private static final float SPEED = 1000;
+    private static final Vector2 SIZE = new Vector2(32, 16);
     private static Texture texture = new Texture(Gdx.files.internal("shot.png"));
-    private boolean homing = false;
-    private Rock target;
     private Sprite sprite = new Sprite(texture);
     private ColorUtils.Color color;
     private Vector2 position;
     private Vector2 vector;
     private RockManager rockManager;
-    private boolean isHandled = false;
+    private boolean hit = false;
+    private Reaction reaction;
 
-    public Shot(float x, float y, ColorUtils.Color color, RockManager rockManager) {
+    public Shot(Vector2 position, ColorUtils.Color color, RockManager rockManager) {
         this.color = color;
         this.rockManager = rockManager;
 
         vector = new Vector2(1, 0);
-        position = new Vector2(x, y - SIZE.y / 2);// déplace l'origine au centre (horizontalement)
+        this.position = new Vector2(position.x, position.y - SIZE.y / 2); // déplace l'origine au centre (horizontalement)
 
         sprite.setColor(color.getValue());
         sprite.setSize(SIZE.x, SIZE.y);
-        sprite.setPosition(position.x, position.y);
+        sprite.setPosition(this.position.x, this.position.y);
         sprite.setOriginCenter();
-    }
 
-    public void setHoming(Rock target) {
-        if (target == null) {
-            isHandled = true;
-        } else {
-            this.target = target;
-            homing = true;
-        }
+        reaction = new Reaction();
     }
 
     @Override
     public void update() {
-        if (homing) {
-            if (target.isOut()) {
-                homing = false;
-                target = null;
-            } else {
-                vector.x = target.getPos().x - position.x;
-                vector.y = target.getPos().y - position.y;
+        if (!hit) {
+            vector.nor();
+
+            position.x += vector.x * Gdx.graphics.getDeltaTime() * SPEED;
+            position.y += vector.y * Gdx.graphics.getDeltaTime() * SPEED;
+
+            sprite.setRotation(vector.angle());
+            sprite.setPosition(position.x, position.y);
+
+            for (Rock rock : rockManager.getRocks()) {
+                if (rock.getBounds().overlaps(sprite.getBoundingRectangle()) && !rock.isExploding()) {
+                    reaction.addLink(rock.position, color);
+                    rock.handleReaction(reaction);
+                    hit = true;
+
+                    break;
+                }
             }
+
+        } else {
+            reaction.update();
         }
-
-        vector.nor();
-
-        position.x += vector.x * Gdx.graphics.getDeltaTime() * SPEED;
-        position.y += vector.y * Gdx.graphics.getDeltaTime() * SPEED;
-
-        for (Rock rock : rockManager.getRocks()) {
-            if (rock.getBounds().overlaps(sprite.getBoundingRectangle()) && !rock.isExploding()) {
-                homing = false;
-                rock.handleShot(this);
-                break;
-            }
-        }
-
-        sprite.setRotation(vector.angle());
-        sprite.setPosition(position.x, position.y);
     }
 
     @Override
     public void draw(Batch batch) {
-        sprite.draw(batch);
+        if (hit) {
+            reaction.draw(batch);
+        } else {
+            sprite.draw(batch);
+        }
     }
 
     @Override
@@ -88,11 +81,7 @@ public class Shot implements LiveDrawable {
     @Override
     public boolean isOut() {
         return position.x > Gdx.graphics.getWidth() || position.x < -SIZE.x - 100
-                || position.y < -SIZE.y - 100 || position.y > Gdx.graphics.getHeight() || isHandled;
-    }
-
-    public void setHandled() {
-        isHandled = true;
+                || position.y < -SIZE.y - 100 || position.y > Gdx.graphics.getHeight() || (hit && reaction.isOut());
     }
 
     public ColorUtils.Color getColor() {

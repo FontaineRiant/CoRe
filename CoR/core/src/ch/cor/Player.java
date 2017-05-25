@@ -4,17 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
 public class Player implements LiveDrawable {
-    private final static float MAX_SPEED = 1000; // pixels/sec
-    private final static float ACCELERATION = 5000; // pixels/sec^2
-    private final static float INERTIA = 3000; // pixels/sec^2
-    private final static float SIZE = 40;
-    private final static float RATE_OF_FIRE = 0.15f; // secondes entre 2 tirs
+    private final static float MAX_SPEED = 1000; // en pixels/sec
+    private final static float ACCELERATION = 5000; // en pixels/sec^2
+    private final static float INERTIA = 3000; // en pixels/sec^2
+    private final static float SIZE = 40; // en pixels
+    private final static float RATE_OF_FIRE = 0.2f; // secondes entre 2 tirs
     private final static int RED_KEY = Input.Keys.J;
     private final static int YELLOW_KEY = Input.Keys.K;
     private final static int BLUE_KEY = Input.Keys.L;
@@ -30,6 +31,7 @@ public class Player implements LiveDrawable {
     private Sprite sprite = new Sprite(new Texture(Gdx.files.internal("ship.png")));
     private Vector2 vector = new Vector2();
     private ArrayList<Shot> shots = new ArrayList<Shot>();
+    private BitmapFont font = new BitmapFont();
 
     public Player(float x, float y, RockManager rockManager) {
         this.rockManager = rockManager;
@@ -138,7 +140,7 @@ public class Player implements LiveDrawable {
                 color = ColorUtils.add(color, ColorUtils.Color.BLUE);
             }
 
-            shots.add(new Shot(x + SIZE, y + SIZE / 2, color, rockManager));
+            shots.add(new Shot(new Vector2(x + SIZE, y + SIZE / 2), color, rockManager));
             timeSinceLastShot = 0;
         }
 
@@ -151,7 +153,7 @@ public class Player implements LiveDrawable {
 
     @Override
     public boolean isOut() {
-        return dead;
+        return false;
     }
 
     @Override
@@ -159,6 +161,10 @@ public class Player implements LiveDrawable {
         for (Shot sh : shots) {
             sh.draw(batch);
         }
-        sprite.draw(batch);
+        if(dead) {
+            font.draw(batch, "GAME OVER (press 'R' to try again)", Gdx.graphics.getWidth()/2 - 120, Gdx.graphics.getHeight()/2 + 5);
+        } else {
+            sprite.draw(batch);
+        }
     }
 }

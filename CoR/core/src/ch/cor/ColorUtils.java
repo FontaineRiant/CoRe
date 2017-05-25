@@ -37,6 +37,15 @@ public class ColorUtils {
         return Color.values()[random.nextInt(Color.values().length-2)+1];
     }
 
+    public static Color getRandomColdColor() {
+        return Color.values()[random.nextInt(3)+4];
+    }
+
+    public static Color getRandomNWarmColor() {
+        return Color.values()[random.nextInt(3)+1];
+    }
+
+
     private static boolean isPrimary(Color col) {
         return col == Color.RED || col == Color.YELLOW || col == Color.BLUE;
     }

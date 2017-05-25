@@ -18,7 +18,7 @@ public class BigRock extends Rock {
     public void handleReaction(Reaction reaction) {
         if ((color == reaction.getColor() && --hitpoints < 1) || reaction.getColor() == ColorUtils.Color.WHITE) {
             reaction.addLink(position, reaction.getColor() == ColorUtils.Color.WHITE ? ColorUtils.Color.WHITE : color);
-            isExploding = true;
+            explode();
             CoR.points += POINT_VALUE;
             ReactionHandler nearest = rockManager.getNearestRock(position);
             if (nearest != null) {

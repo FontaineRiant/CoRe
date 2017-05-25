@@ -49,11 +49,6 @@ public class Rock implements LiveDrawable, ReactionHandler {
         position.x -= Gdx.graphics.getDeltaTime() * SPEED;
 
         if (isExploding) {
-            if (sprite.getTexture() == texture) {
-                sprite.setTexture(explosionTexture);
-                sprite.setSize(0, 0);
-                sprite.setColor(color.getValue());
-            }
 
             sprite.setSize(sprite.getWidth() + Gdx.graphics.getDeltaTime() * EXPLOSION_VELOCITY,
                     sprite.getHeight() + Gdx.graphics.getDeltaTime() * EXPLOSION_VELOCITY);
@@ -90,11 +85,20 @@ public class Rock implements LiveDrawable, ReactionHandler {
         return isExploding;
     }
 
+    protected void explode(){
+        isExploding = true;
+        sprite.setTexture(explosionTexture);
+        sprite.setSize(0, 0);
+        sprite.setColor(color.getValue());
+    }
+
     @Override
     public void handleReaction(Reaction reaction) {
         if (color == reaction.getColor() || reaction.getColor() == ColorUtils.Color.WHITE) {
             reaction.addLink(position, reaction.getColor() == ColorUtils.Color.WHITE ? ColorUtils.Color.WHITE : color);
-            isExploding = true;
+
+            explode();
+
             CoR.points += POINT_VALUE;
             ReactionHandler nearest = rockManager.getNearestRock(position);
             if (nearest != null) {

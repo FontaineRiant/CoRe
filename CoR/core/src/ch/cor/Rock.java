@@ -14,26 +14,20 @@ import java.util.Random;
  * Author(s) : Antoine Friant
  * Date : 05.05.17
  */
-public class Rock implements LiveDrawable, ReactionHandler {
+public class Rock implements Entity, ReactionHandler {
     private static final float SPEED = 150;
     private static final float MAX_ROTATION_SPEED = 100; // degrés par sec
     private static final Vector2 SIZE = new Vector2(32, 32);
-    private static final float EXPLOSION_VELOCITY = 75;
-    private static final float EXPLOSION_SIZE = 128;
     private static final int POINT_VALUE = 1;
     private static Texture texture = new Texture(Gdx.files.internal("rock.png"));
-    private static Texture explosionTexture = new Texture(Gdx.files.internal("explosion.png"));
-    protected Sprite sprite = new Sprite(texture);
-    protected ColorUtils.Color color;
-    protected Vector2 position;
-    protected boolean isExploding = false;
-    protected RockManager rockManager;
+    private Sprite sprite = new Sprite(texture);
+    private ColorUtils.Color color;
+    private Vector2 position;
     private float rotation;
     private boolean isOut = false;
 
-    public Rock(float x, float y, ColorUtils.Color color, RockManager rockManager) {
+    public Rock(float x, float y, ColorUtils.Color color) {
         this.color = color;
-        this.rockManager = rockManager;
 
         position = new Vector2(x, y - SIZE.y / 2); // déplace l'origine au centre (horizontalement)
         Random r = new Random();
@@ -47,19 +41,6 @@ public class Rock implements LiveDrawable, ReactionHandler {
     @Override
     public void update() {
         position.x -= Gdx.graphics.getDeltaTime() * SPEED;
-
-        if (isExploding) {
-
-            sprite.setSize(sprite.getWidth() + Gdx.graphics.getDeltaTime() * EXPLOSION_VELOCITY,
-                    sprite.getHeight() + Gdx.graphics.getDeltaTime() * EXPLOSION_VELOCITY);
-            sprite.setAlpha(1 - sprite.getHeight() / EXPLOSION_SIZE);
-            sprite.setOriginCenter();
-
-            if (sprite.getHeight() > EXPLOSION_SIZE) {
-                isOut = true;
-            }
-        }
-
         sprite.rotate(rotation * Gdx.graphics.getDeltaTime());
         sprite.setPosition(position.x, position.y);
     }
@@ -75,32 +56,21 @@ public class Rock implements LiveDrawable, ReactionHandler {
     }
 
     @Override
-    public boolean isOut() {
+    public boolean isMarkedForRemoval() {
         return position.x > Gdx.graphics.getWidth() || position.x < -SIZE.x
                 || position.y < -SIZE.y || position.y > Gdx.graphics.getHeight()
                 || isOut;
-    }
-
-    public boolean isExploding() {
-        return isExploding;
-    }
-
-    protected void explode(){
-        isExploding = true;
-        sprite.setTexture(explosionTexture);
-        sprite.setSize(0, 0);
-        sprite.setColor(color.getValue());
     }
 
     @Override
     public void handleReaction(Reaction reaction) {
         if (color == reaction.getColor() || reaction.getColor() == ColorUtils.Color.WHITE) {
             reaction.addLink(position, reaction.getColor() == ColorUtils.Color.WHITE ? ColorUtils.Color.WHITE : color);
+            EntityManager.getInstance().addEntity(new Explosion(position));
+            isOut = true;
 
-            explode();
-
-            CoR.points += POINT_VALUE;
-            ReactionHandler nearest = rockManager.getNearestRock(position);
+            EntityManager.getInstance().addPoints(POINT_VALUE);
+            ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
             if (nearest != null) {
                 nearest.handleReaction(reaction);
             }
@@ -109,9 +79,5 @@ public class Rock implements LiveDrawable, ReactionHandler {
 
     public Vector2 getPos() {
         return position;
-    }
-
-    public Rectangle getBounds() {
-        return sprite.getBoundingRectangle();
     }
 }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
-public class Player implements LiveDrawable {
+public class Player implements Entity {
     private final static float MAX_SPEED = 1000; // en pixels/sec
     private final static float ACCELERATION = 5000; // en pixels/sec^2
     private final static float INERTIA = 3000; // en pixels/sec^2
@@ -25,18 +25,13 @@ public class Player implements LiveDrawable {
     private final static int RIGHT_KEY = Input.Keys.D;
 
     private boolean dead = false;
-    private RockManager rockManager;
     private float timeSinceLastShot = 0;
-    private float x, y;
+    private Vector2 position;
     private Sprite sprite = new Sprite(new Texture(Gdx.files.internal("ship.png")));
     private Vector2 vector = new Vector2();
-    private ArrayList<Shot> shots = new ArrayList<Shot>();
-    private BitmapFont font = new BitmapFont();
 
-    public Player(float x, float y, RockManager rockManager) {
-        this.rockManager = rockManager;
-        this.x = x;
-        this.y = y;
+    public Player(float x, float y) {
+        position = new Vector2(x, y);
         sprite.setSize(SIZE, SIZE);
         sprite.setOriginCenter();
         sprite.setRotation(-135);
@@ -57,10 +52,10 @@ public class Player implements LiveDrawable {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         // Mort
-        for (Rock rock : rockManager.getRocks()) {
-            if (sprite.getBoundingRectangle().overlaps(rock.getBounds()) && !rock.isExploding()) {
-                dead =true;
-            }
+        ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
+        if (nearest != null && position.dst(nearest.getPos()) < SIZE) {
+            dead = true;
+            EntityManager.getInstance().addEntity(new Explosion(position));
         }
 
         // Inputs de déplacements
@@ -93,37 +88,27 @@ public class Player implements LiveDrawable {
         vector.y = Math.min(Math.abs(vector.y), MAX_SPEED) * Math.signum(vector.y);
 
         // Affecte la nouvelle position
-        x += vector.x * deltaTime;
-        y += vector.y * deltaTime;
+        position.x += vector.x * deltaTime;
+        position.y += vector.y * deltaTime;
 
         // Comportement du vecteur aux bordures
-        if (x < 0 || x >= Gdx.graphics.getWidth() - sprite.getWidth()) {
+        if (position.x < 0 || position.x >= Gdx.graphics.getWidth() - sprite.getWidth()) {
             vector.x = 0;
         }
 
-        if (y < 0 || y >= Gdx.graphics.getHeight() - sprite.getHeight()) {
+        if (position.y < 0 || position.y >= Gdx.graphics.getHeight() - sprite.getHeight()) {
             vector.y = 0;
         }
 
         // Bordures du jeu, repositionnement
-        x = Math.max(0, Math.min(x, Gdx.graphics.getWidth() - sprite.getWidth()));
-        y = Math.max(0, Math.min(y, Gdx.graphics.getHeight() - sprite.getHeight()));
+        position.x = Math.max(0, Math.min(position.x, Gdx.graphics.getWidth() - sprite.getWidth()));
+        position.y = Math.max(0, Math.min(position.y, Gdx.graphics.getHeight() - sprite.getHeight()));
 
         // Effectue le déplacement
-        sprite.setPosition(x, y);
+        sprite.setPosition(position.x, position.y);
 
         // Tirs
         timeSinceLastShot += Gdx.graphics.getDeltaTime();
-
-        ArrayList<Shot> toBeDeleted = new ArrayList<Shot>();
-        for (Shot sh : shots) {
-            sh.update();
-            if (sh.isOut()) {
-                toBeDeleted.add(sh);
-            }
-        }
-
-        shots.removeAll(toBeDeleted);
 
         if ((Gdx.input.isKeyPressed(RED_KEY) || Gdx.input.isKeyPressed(YELLOW_KEY) || Gdx.input.isKeyPressed(BLUE_KEY))
                 && timeSinceLastShot >= RATE_OF_FIRE) {
@@ -140,7 +125,8 @@ public class Player implements LiveDrawable {
                 color = ColorUtils.add(color, ColorUtils.Color.BLUE);
             }
 
-            shots.add(new Shot(new Vector2(x + SIZE, y + SIZE / 2), color, rockManager));
+            EntityManager.getInstance().addEntity(new Shot(new Vector2(position.x + SIZE, position.y + SIZE / 2), color));
+
             timeSinceLastShot = 0;
         }
 
@@ -152,19 +138,12 @@ public class Player implements LiveDrawable {
     }
 
     @Override
-    public boolean isOut() {
-        return false;
+    public boolean isMarkedForRemoval() {
+        return dead;
     }
 
     @Override
     public void draw(Batch batch) {
-        for (Shot sh : shots) {
-            sh.draw(batch);
-        }
-        if(dead) {
-            font.draw(batch, "GAME OVER (press 'R' to try again)", Gdx.graphics.getWidth()/2 - 120, Gdx.graphics.getHeight()/2 + 5);
-        } else {
-            sprite.draw(batch);
-        }
+         sprite.draw(batch);
     }
 }

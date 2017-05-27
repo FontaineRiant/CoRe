@@ -5,10 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import java.awt.geom.Line2D;
 import java.util.LinkedList;
 
 /**
@@ -16,7 +14,7 @@ import java.util.LinkedList;
  * Author(s) : Antoine Friant
  * Date : 16.05.17
  */
-public class Reaction implements LiveDrawable {
+public class Reaction implements Entity {
     private static final float LIFE_SPAN = 1.5f; // en secondes
     private static final float WIDTH = 15;
     private static Texture texture = new Texture(Gdx.files.internal("lazorv2.png"));
@@ -81,7 +79,7 @@ public class Reaction implements LiveDrawable {
     }
 
     @Override
-    public boolean isOut() {
+    public boolean isMarkedForRemoval() {
         return stopped;
     }
 

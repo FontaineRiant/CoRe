@@ -10,35 +10,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
 
 public class CoR extends ApplicationAdapter {
-    private static final int STAR_COUNT = 1000;
-    public static int points;
-    private boolean paused = false;
     private SpriteBatch batch;
-    private LinkedList<LiveDrawable> drawables;
-    private RockManager rockManager;
     private ArrayList<Music> playList;
     private int musicIndex;
-    private Random random = new Random();
     private BitmapFont font;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        rockManager = new RockManager();
-        drawables = new LinkedList<LiveDrawable>();
-
         font = new BitmapFont();
-        points = 0;
 
-        drawables.add(new Player(100, Gdx.graphics.getHeight() / 2, rockManager));
-        drawables.add(rockManager);
-        for (int i = 0; i < STAR_COUNT; i++) {
-            drawables.addFirst(new Star());
-        }
+        // joueur
+        EntityManager.getInstance().addEntity(new Player(100, Gdx.graphics.getHeight() / 2));
 
         // musique
         playList = new ArrayList<Music>();
@@ -49,7 +35,7 @@ public class CoR extends ApplicationAdapter {
                 playList.add(Gdx.audio.newMusic(child));
             }
         }
-        musicIndex = random.nextInt(playList.size());
+        musicIndex = new Random().nextInt(playList.size());
     }
 
     @Override
@@ -57,51 +43,16 @@ public class CoR extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.15f, 0.1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            paused = !paused;
+        if (!playList.get(musicIndex).isPlaying()) {
+            musicIndex = (++musicIndex) % playList.size();
+            playList.get(musicIndex).play();
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            playList.get(musicIndex).stop();
-            create();
-        }
-
-        if (!paused) {
-            if (!playList.get(musicIndex).isPlaying()) {
-                musicIndex = (++musicIndex) % playList.size();
-                playList.get(musicIndex).play();
-            }
-
-            ArrayList<LiveDrawable> toBeDeleted = new ArrayList<LiveDrawable>();
-            for (LiveDrawable ld : drawables) {
-                ld.update();
-                if (ld.isOut()) {
-                    toBeDeleted.add(ld);
-                }
-            }
-            // retire les élément qui sortent de l'écran
-            drawables.removeAll(toBeDeleted);
-        }
+        EntityManager.getInstance().updateAll();
 
         // draw le batch (tout en une fois, entre batch.begin() et batch.end() pour les performances)
         batch.begin();
-        for (LiveDrawable ld : drawables) {
-            ld.draw(batch);
-        }
-        // affichage du score
-        font.draw(batch, "Score : " + points, 5, Gdx.graphics.getHeight() - 5);
-        if (paused) {
-            // affichage du menu pause
-            font.draw(batch,
-                    "PAUSED\n\n" +
-                            "Controls :\n" +
-                            "Pause/unpause : SPACEBAR\n" +
-                            "Restart : R\n" +
-                            "Movement : W, A, S, D\n" +
-                            "Red : J\n" +
-                            "Yellow : K\n" +
-                            "Blue : L\n", Gdx.graphics.getWidth()/2 - 150, Gdx.graphics.getHeight()/2 + font.getLineHeight() * 5);
-        }
+        EntityManager.getInstance().drawAll(batch);
         batch.end();
     }
 

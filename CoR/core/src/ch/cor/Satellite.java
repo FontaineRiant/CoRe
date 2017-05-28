@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.Random;
 
 /**
- * Project : CoR
- * Author(s) : Antoine Friant
- * Date : 28.05.17
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
  */
 public class Satellite implements ReactionHandler, Entity {
     private static final float SPEED = 150;
@@ -26,9 +26,9 @@ public class Satellite implements ReactionHandler, Entity {
     private boolean isOut = false;
     private int hp = POINT_VALUE;
 
-    public Satellite(float x, float y) {
-        position = new Vector2(x, y - SIZE.y / 2); // déplace l'origine au centre (horizontalement)
+    public Satellite() {
         Random r = new Random();
+        position = new Vector2(Gdx.graphics.getWidth(), r.nextFloat() * Gdx.graphics.getHeight() - SIZE.y / 2);
         rotation = (r.nextFloat() - 0.5f) * MAX_ROTATION_SPEED * 2.0f;
 
         sprite.setPosition(position.x, position.y);

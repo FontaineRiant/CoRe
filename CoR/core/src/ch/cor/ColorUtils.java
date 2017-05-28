@@ -1,13 +1,12 @@
 package ch.cor;
 
-import com.badlogic.gdx.graphics.Color;
-
 import java.util.Random;
 
+
 /**
- * Project : CoR
- * Author(s) : Antoine Friant
- * Date : 05.05.17
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
  */
 public class ColorUtils {
     private static Random random = new Random();

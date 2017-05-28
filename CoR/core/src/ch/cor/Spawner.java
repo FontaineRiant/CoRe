@@ -5,9 +5,9 @@ import com.badlogic.gdx.Gdx;
 import java.util.Random;
 
 /**
- * Project : CoR
- * Author(s) : Antoine Friant
- * Date : 05.05.17
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
  */
 public class Spawner {
     private static final int STAR_COUNT = 1000;
@@ -45,19 +45,15 @@ public class Spawner {
 
 
             if (random.nextDouble() < iceBlockSpawnChance) {
-                EntityManager.getInstance().addEntity(new IceShard(Gdx.graphics.getWidth(),
-                        random.nextFloat() * Gdx.graphics.getHeight()));
+                EntityManager.getInstance().addEntity(new IceShard());
             }
 
             if (random.nextDouble() < satelliteSpawnChance) {
-                EntityManager.getInstance().addEntity(new Satellite(Gdx.graphics.getWidth(),
-                        random.nextFloat() * Gdx.graphics.getHeight()));
+                EntityManager.getInstance().addEntity(new Satellite());
             }
 
             if (random.nextDouble() < rockSpawnChance) {
-                EntityManager.getInstance().addEntity(new Rock(Gdx.graphics.getWidth(),
-                        random.nextFloat() * Gdx.graphics.getHeight(),
-                        spawnType == State.WARM ? ColorUtils.getRandomNWarmColor() : ColorUtils.getRandomColdColor()));
+                EntityManager.getInstance().addEntity(new Rock(spawnType == State.WARM ? ColorUtils.getRandomNWarmColor() : ColorUtils.getRandomColdColor()));
             }
 
             timeSinceLastSpawn = 0;

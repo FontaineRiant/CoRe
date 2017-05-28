@@ -6,6 +6,11 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
+ */
 public class Explosion implements Entity {
 
     private static final float EXPLOSION_DURATION = 1; // en secondes

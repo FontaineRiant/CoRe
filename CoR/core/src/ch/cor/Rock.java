@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.Random;
 
 /**
- * Project : CoR
- * Author(s) : Antoine Friant
- * Date : 05.05.17
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
  */
 public class Rock implements Entity, ReactionHandler {
     private static final float SPEED = 200;
@@ -26,10 +26,10 @@ public class Rock implements Entity, ReactionHandler {
     private float rotation;
     private boolean isOut = false;
 
-    public Rock(float x, float y, ColorUtils.Color color) {
+    public Rock(ColorUtils.Color color) {
         this.color = color;
-
-        position = new Vector2(x, y - SIZE.y / 2); // déplace l'origine au centre (horizontalement)
+        Random random = new Random();
+        position = new Vector2(Gdx.graphics.getWidth(), random.nextFloat() * Gdx.graphics.getHeight() - SIZE.y / 2);
         Random r = new Random();
         rotation = (r.nextFloat() - 0.5f) * MAX_ROTATION_SPEED * 2.0f;
 

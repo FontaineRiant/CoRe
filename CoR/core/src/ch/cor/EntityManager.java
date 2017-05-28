@@ -9,7 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.LinkedList;
 
 /**
- * singleton
+ * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
+ * @date 28.05.2017
+ * @brief
  */
 public class EntityManager {
     private static EntityManager instance = null;

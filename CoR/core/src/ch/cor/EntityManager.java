@@ -108,7 +108,7 @@ public class EntityManager {
         for (Entity e : entities) {
             if (e instanceof ReactionHandler) {
                 ReactionHandler handler = (ReactionHandler) e;
-                float tempDistance = handler.getPos().dst2(coord);
+                float tempDistance = coord.dst(handler.getBounds().getX(), handler.getBounds().getY());
                 if (distance > tempDistance && !e.isMarkedForRemoval()) {
                     nearest = handler;
                     distance = tempDistance;

@@ -1,6 +1,6 @@
 package ch.cor;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Project : CoR
@@ -9,6 +9,5 @@ import com.badlogic.gdx.math.Vector2;
  */
 public interface ReactionHandler {
     void handleReaction(Reaction reaction);
-
-    Vector2 getPos();
+    Rectangle getBounds();
 }

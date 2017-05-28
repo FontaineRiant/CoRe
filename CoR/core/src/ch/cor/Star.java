@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 
@@ -22,6 +23,8 @@ public class Star implements Entity {
         position = new Vector2();
         init();
         position.x = random.nextFloat() * Gdx.graphics.getWidth();
+
+        sprite.setPosition(position.x, position.y);
     }
 
     private void init() {
@@ -45,11 +48,6 @@ public class Star implements Entity {
     @Override
     public void draw(Batch batch) {
         sprite.draw(batch);
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     @Override

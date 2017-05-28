@@ -1,10 +1,7 @@
 package ch.cor;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -18,6 +15,7 @@ public class Spawner {
     private float timeSinceLastSpawn = 0f;
     private float rockSpawnChance = 1f;
     private float iceBlockSpawnChance = 0.1f;
+    private float satelliteSpawnChance = 0.05f;
     private float newStateChance = 0.1f;
     private Random random;
     private State spawnType;
@@ -47,9 +45,15 @@ public class Spawner {
 
 
             if (random.nextDouble() < iceBlockSpawnChance) {
-                EntityManager.getInstance().addEntity(new IceBlock(Gdx.graphics.getWidth(),
+                EntityManager.getInstance().addEntity(new IceShard(Gdx.graphics.getWidth(),
                         random.nextFloat() * Gdx.graphics.getHeight()));
             }
+
+            if (random.nextDouble() < satelliteSpawnChance) {
+                EntityManager.getInstance().addEntity(new Satellite(Gdx.graphics.getWidth(),
+                        random.nextFloat() * Gdx.graphics.getHeight()));
+            }
+
             if (random.nextDouble() < rockSpawnChance) {
                 EntityManager.getInstance().addEntity(new Rock(Gdx.graphics.getWidth(),
                         random.nextFloat() * Gdx.graphics.getHeight(),

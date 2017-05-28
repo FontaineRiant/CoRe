@@ -7,11 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-/**
- * Project : CoR
- * Author(s) : Antoine Friant
- * Date : 05.05.17
- */
 public class Shot implements Entity {
     private static final float SPEED = 1000;
     private static final Vector2 SIZE = new Vector2(32, 16);
@@ -46,10 +41,10 @@ public class Shot implements Entity {
         sprite.setPosition(position.x, position.y);
 
         ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
-        if (nearest != null && position.dst(nearest.getPos()) < SIZE.y) {
-            Reaction reaction = new Reaction();
-            reaction.addLink(nearest.getPos(), color);
+        if (nearest != null && sprite.getBoundingRectangle().overlaps(nearest.getBounds())) {
+            Reaction reaction = new Reaction(color);
             EntityManager.getInstance().addEntity(reaction);
+            EntityManager.getInstance().addEntity(new Explosion(position, color));
             nearest.handleReaction(reaction);
             hit = true;
         }
@@ -61,17 +56,8 @@ public class Shot implements Entity {
     }
 
     @Override
-    public void dispose() {
-
-    }
-
-    @Override
     public boolean isMarkedForRemoval() {
         return position.x > Gdx.graphics.getWidth() || position.x < -SIZE.x - 100
                 || position.y < -SIZE.y - 100 || position.y > Gdx.graphics.getHeight() || hit;
-    }
-
-    public ColorUtils.Color getColor() {
-        return color;
     }
 }

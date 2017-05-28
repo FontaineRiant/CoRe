@@ -15,7 +15,8 @@ public class Explosion implements Entity {
     private static Texture explosionTexture = new Texture(Gdx.files.internal("explosion.png"));
     private Sprite sprite = new Sprite(explosionTexture);
 
-    public Explosion(Vector2 position) {
+    public Explosion(Vector2 position, ColorUtils.Color color) {
+        sprite.setColor(color.getValue());
         sprite.setPosition(position.x - EXPLOSION_SIZE / 2, position.y - EXPLOSION_SIZE / 2);
         sprite.setSize(EXPLOSION_SIZE, EXPLOSION_SIZE);
         sprite.setOriginCenter();
@@ -37,10 +38,6 @@ public class Explosion implements Entity {
         sprite.draw(batch);
     }
 
-    @Override
-    public void dispose() {
-
-    }
 
     @Override
     public boolean isMarkedForRemoval() {

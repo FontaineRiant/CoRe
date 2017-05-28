@@ -12,29 +12,26 @@ import java.util.Random;
 /**
  * Project : CoR
  * Author(s) : Antoine Friant
- * Date : 05.05.17
+ * Date : 28.05.17
  */
-public class Rock implements Entity, ReactionHandler {
-    private static final float SPEED = 200;
+public class Satellite implements ReactionHandler, Entity {
+    private static final float SPEED = 150;
     private static final float MAX_ROTATION_SPEED = 100; // degrés par sec
-    private static final Vector2 SIZE = new Vector2(32, 32);
-    private static final int POINT_VALUE = 1;
-    private static Texture texture = new Texture(Gdx.files.internal("rock.png"));
+    private static final Vector2 SIZE = new Vector2(50, 50);
+    private static final int POINT_VALUE = 20;
+    private static Texture texture = new Texture(Gdx.files.internal("satellite.png"));
     private Sprite sprite = new Sprite(texture);
-    private ColorUtils.Color color;
     private Vector2 position;
     private float rotation;
     private boolean isOut = false;
+    private int hp = POINT_VALUE;
 
-    public Rock(float x, float y, ColorUtils.Color color) {
-        this.color = color;
-
+    public Satellite(float x, float y) {
         position = new Vector2(x, y - SIZE.y / 2); // déplace l'origine au centre (horizontalement)
         Random r = new Random();
         rotation = (r.nextFloat() - 0.5f) * MAX_ROTATION_SPEED * 2.0f;
 
         sprite.setPosition(position.x, position.y);
-        sprite.setColor(color.getValue());
         sprite.setSize(SIZE.x, SIZE.y);
         sprite.setOriginCenter();
     }
@@ -60,22 +57,26 @@ public class Rock implements Entity, ReactionHandler {
 
     @Override
     public void handleReaction(Reaction reaction) {
-
         reaction.addLink(position);
-
-        if (color == reaction.getColor() || reaction.getColor() == ColorUtils.Color.WHITE) {
-            reaction.setColor(reaction.getColor() == ColorUtils.Color.WHITE ? ColorUtils.Color.WHITE : color);
-            EntityManager.getInstance().addEntity(new Explosion(position, color));
+        if (reaction.getColor() == ColorUtils.Color.BLACK) {
+            Random r = new Random();
             isOut = true;
 
-            EntityManager.getInstance().addPoints(POINT_VALUE);
             ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
             if (nearest != null) {
+                reaction.setColor(ColorUtils.getRandomNWarmColor());
+                nearest.handleReaction(reaction);
+                reaction.setColor(ColorUtils.getRandomColdColor());
                 nearest.handleReaction(reaction);
             }
+
+            if(--hp > 0) {
+                isOut = false;
+            } else {
+                EntityManager.getInstance().addPoints(POINT_VALUE);
+                EntityManager.getInstance().addEntity(new Explosion(position,ColorUtils.Color.BLACK));
+            }
         }
-
-
     }
 
     @Override

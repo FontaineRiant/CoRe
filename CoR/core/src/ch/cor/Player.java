@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class Player implements Entity {
     private final static float ACCELERATION = 5000; // en pixels/sec^2
     private final static float INERTIA = 3000; // en pixels/sec^2
     private final static float SIZE = 40; // en pixels
-    private final static float RATE_OF_FIRE = 0.2f; // secondes entre 2 tirs
+    private final static float RATE_OF_FIRE = 0.15f; // secondes entre 2 tirs
     private final static int RED_KEY = Input.Keys.J;
     private final static int YELLOW_KEY = Input.Keys.K;
     private final static int BLUE_KEY = Input.Keys.L;
@@ -53,9 +54,10 @@ public class Player implements Entity {
 
         // Mort
         ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
-        if (nearest != null && position.dst(nearest.getPos()) < SIZE) {
+        if (nearest != null && nearest.getBounds().overlaps(sprite.getBoundingRectangle())) {
             dead = true;
-            EntityManager.getInstance().addEntity(new Explosion(position));
+            EntityManager.getInstance().addEntity(new Explosion(position, ColorUtils.Color.WHITE));
+            EntityManager.getInstance().setGameOver();
         }
 
         // Inputs de déplacements
@@ -130,11 +132,6 @@ public class Player implements Entity {
             timeSinceLastShot = 0;
         }
 
-    }
-
-    @Override
-    public void dispose() {
-        sprite.getTexture().dispose();
     }
 
     @Override

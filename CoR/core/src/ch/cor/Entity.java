@@ -11,6 +11,5 @@ import com.badlogic.gdx.math.Rectangle;
 public interface Entity {
     void update();
     void draw(Batch batch);
-    void dispose();
     boolean isMarkedForRemoval();
 }

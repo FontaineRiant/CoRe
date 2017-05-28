@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ import java.util.LinkedList;
  * Date : 16.05.17
  */
 public class Reaction implements Entity {
-    private static final float LIFE_SPAN = 1.5f; // en secondes
+    private static final float LIFE_SPAN = 0.5f; // en secondes
     private static final float WIDTH = 15;
     private static Texture texture = new Texture(Gdx.files.internal("lazorv2.png"));
     private float elapsedTime = 0;
@@ -23,17 +24,16 @@ public class Reaction implements Entity {
     private ColorUtils.Color color;
     private LinkedList<Vector2> links = new LinkedList<Vector2>();
     private LinkedList<Sprite> sprites = new LinkedList<Sprite>();
-    private ShapeRenderer renderer = new ShapeRenderer();
 
-    public Reaction() {
+    public Reaction(ColorUtils.Color color) {
+        this.color = color;
         stopped = false;
     }
 
-    public void addLink(Vector2 coord, ColorUtils.Color color) {
+    public void addLink(Vector2 coord) {
         sprites.add(new Sprite(texture));
-        this.color = color;
         sprites.getLast().setColor(color.getValue());
-        links.add(coord);
+        links.add(new Vector2(coord));
         update();
     }
 
@@ -60,7 +60,6 @@ public class Reaction implements Entity {
             sprites.get(i).setPosition(links.get(i).x, links.get(i).y);
             Vector2 link = new Vector2(x, y);
 
-//            sprites.get(i).setRotation((float) Math.toDegrees(x < 0 ? Math.PI - Math.atan(y / x) : Math.atan(y / x)));
             sprites.get(i).setRotation(link.angle());
         }
     }
@@ -73,18 +72,16 @@ public class Reaction implements Entity {
     }
 
     @Override
-    public void dispose() {
-        stopped = true;
-        texture.dispose();
-    }
-
-    @Override
     public boolean isMarkedForRemoval() {
         return stopped;
     }
 
     public ColorUtils.Color getColor() {
         return color;
+    }
+
+    public void setColor(ColorUtils.Color color) {
+        this.color = color;
     }
 
     public int getReactionSize() {

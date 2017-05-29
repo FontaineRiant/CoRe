@@ -12,7 +12,8 @@ import java.util.Random;
 /**
  * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
  * @date 28.05.2017
- * @brief
+ * @brief Le Satellite absorbe un certain nombre de coups blancs ou noirs, et renvoie la réaction
+ * deux fois à chaque impact absorbé.
  */
 public class Satellite implements ReactionHandler, Entity {
     private static final float SPEED = 150; // en pixels/s
@@ -23,14 +24,19 @@ public class Satellite implements ReactionHandler, Entity {
     private Sprite sprite = new Sprite(texture);
     private Vector2 position;
     private float rotation;
-    private boolean isOut = false;
+    private boolean isDestroyed = false;
     private int hp = POINT_VALUE;
 
+    /**
+     * Constructeur
+     */
     public Satellite() {
         Random r = new Random();
+        // position et rotation aléatoires
         position = new Vector2(Gdx.graphics.getWidth(), r.nextFloat() * Gdx.graphics.getHeight() - SIZE.y / 2);
         rotation = (r.nextFloat() - 0.5f) * MAX_ROTATION_SPEED * 2.0f;
 
+        // initialise le sprite
         sprite.setPosition(position.x, position.y);
         sprite.setSize(SIZE.x, SIZE.y);
         sprite.setOriginCenter();
@@ -38,8 +44,13 @@ public class Satellite implements ReactionHandler, Entity {
 
     @Override
     public void update() {
+        // déplace le satellite vers la gauche
         position.x -= Gdx.graphics.getDeltaTime() * SPEED;
+
+        // fait tourner le sprite
         sprite.rotate(rotation * Gdx.graphics.getDeltaTime());
+
+        // déplace le sprite sur la position du satellite
         sprite.setPosition(position.x, position.y);
     }
 
@@ -50,17 +61,23 @@ public class Satellite implements ReactionHandler, Entity {
 
     @Override
     public boolean isMarkedForRemoval() {
+        // marque le satellite pour la suppression s'il sort de l'écran ou s'il est détruit
         return position.x > Gdx.graphics.getWidth() || position.x < -SIZE.x
                 || position.y < -SIZE.y || position.y > Gdx.graphics.getHeight()
-                || isOut;
+                || isDestroyed;
     }
 
     @Override
     public void handleReaction(Reaction reaction) {
+        // ajoute la coordonnée du satellite aux liens de la réaction
         reaction.addLink(position);
-        if (reaction.getColor() == ColorUtils.Color.BLACK) {
-            isOut = true;
 
+        // si la requête reçue est noire
+        if (reaction.getColor() == ColorUtils.Color.BLACK) {
+            // signale le satellite détruit pour qu'il ne se détecte pas lors de la recherche de handler proche
+            isDestroyed = true;
+
+            // envoie 2 couleurs aléatoires (une chaude et une froide) au handler le plus proche
             ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
             if (nearest != null) {
                 reaction.setColor(ColorUtils.getRandomNWarmColor());
@@ -69,20 +86,28 @@ public class Satellite implements ReactionHandler, Entity {
                 nearest.handleReaction(reaction);
             }
 
+            // réduit ses points de vie de 1
             if(--hp > 0) {
-                isOut = false;
+                // s'il rest des hp, on annule sa destruction
+                isDestroyed = false;
             } else {
+                // sinon, on ajoute des points au score et on produit une explosion
                 EntityManager.getInstance().addPoints(POINT_VALUE);
                 EntityManager.getInstance().addEntity(new Explosion(position,ColorUtils.Color.BLACK));
             }
         } else if(reaction.getColor() == ColorUtils.Color.WHITE) {
-            isOut = true;
+            // si la couleur reçue est blanche, il trasmet au suivant sans traiter la réaction
+            // signale le satellite détruit pour qu'il ne se détecte pas lors de la recherche de handler proche
+            isDestroyed = true;
+
+            // encoie la réaction au handler le plus proche
             ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
             if (nearest != null) {
-                reaction.setColor(ColorUtils.Color.WHITE);
                 nearest.handleReaction(reaction);
             }
-            isOut = false;
+
+            // annule sa destruction
+            isDestroyed = false;
         }
     }
 

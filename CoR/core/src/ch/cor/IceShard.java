@@ -12,7 +12,7 @@ import java.util.Random;
 /**
  * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
  * @date 28.05.2017
- * @brief
+ * @brief Bloc de glace. Il ne peut être détruit que indirectement (par réaction) et réfléchit du blanc
  */
 public class IceShard implements Entity, ReactionHandler {
     private static final float SPEED = 150; // en pixels par seconde

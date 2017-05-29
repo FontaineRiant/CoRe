@@ -42,9 +42,14 @@ public class EntityManager {
     private EntityManager() {
         addQueue = new LinkedList<Entity>();
         entities = new LinkedList<Entity>();
+
+        // initialise la police d'écriture
         font = new BitmapFont();
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         font.getData().setScale(1.5f);
+
+        // créé le joueur
+        addEntity(new Player(100, Gdx.graphics.getHeight() / 2));
     }
 
     /**

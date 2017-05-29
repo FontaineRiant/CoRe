@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * @author Finini Valentin, Friant Antoine, Meier Christopher, Palumbo Daniel, Stalder Lawrence
  * @date 28.05.2017
- * @brief
+ * @brief Vaisseau spatial du joueur
  */
 public class Player implements Entity {
     private final static float MAX_SPEED = 1000; // en pixels/sec
@@ -34,6 +34,11 @@ public class Player implements Entity {
     private Sprite sprite = new Sprite(new Texture(Gdx.files.internal("ship.png")));
     private Vector2 vector = new Vector2();
 
+    /**
+     * Constructeur
+     * @param x position horizontale
+     * @param y position verticale
+     */
     public Player(float x, float y) {
         position = new Vector2(x, y);
         sprite.setSize(SIZE, SIZE);
@@ -42,6 +47,11 @@ public class Player implements Entity {
         sprite.setPosition(x, y);
     }
 
+    /**
+     * Renvoie la vitesse après application de l'intertie
+     * @param speed vitesse actuelle
+     * @return vitesse après inertie
+     */
     private float applyInertia(float speed) {
         float dec = DECELERATION * Math.signum(speed) * Gdx.graphics.getDeltaTime();
         if (Math.abs(speed) > Math.abs(dec)) {
@@ -55,15 +65,20 @@ public class Player implements Entity {
     public void update() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        // Mort
+        // Détecte une collision avec un reactionhandler
         ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
         if (nearest != null && nearest.getBounds().overlaps(sprite.getBoundingRectangle())) {
+            // se déclare mort
             dead = true;
+
+            // fait apparaitre une explosion blanche
             EntityManager.getInstance().addEntity(new Explosion(position, ColorUtils.Color.WHITE));
+
+            // signale le gameover au manager pour afficher le message de gameover
             EntityManager.getInstance().setGameOver();
         }
 
-        // Inputs de déplacements
+        // Déplacement en fonction des inputs ...
         if (Gdx.input.isKeyPressed(RIGHT_KEY)) {
             vector.x += deltaTime * ACCELERATION;
         } else if (vector.x > 0) {
@@ -88,35 +103,27 @@ public class Player implements Entity {
             vector.y = applyInertia(vector.y);
         }
 
-        // Impose la vitesse max
+        // Limite à la vitesse maximale
         vector.x = Math.min(Math.abs(vector.x), MAX_SPEED) * Math.signum(vector.x);
         vector.y = Math.min(Math.abs(vector.y), MAX_SPEED) * Math.signum(vector.y);
 
-        // Affecte la nouvelle position
+        // Déplace la position du joueur
         position.x += vector.x * deltaTime;
         position.y += vector.y * deltaTime;
 
-        // Comportement du vecteur aux bordures
-        if (position.x < 0 || position.x >= Gdx.graphics.getWidth() - sprite.getWidth()) {
-            vector.x = 0;
-        }
-
-        if (position.y < 0 || position.y >= Gdx.graphics.getHeight() - sprite.getHeight()) {
-            vector.y = 0;
-        }
-
-        // Bordures du jeu, repositionnement
+        // Limite la position aux bords de l'écran
         position.x = Math.max(0, Math.min(position.x, Gdx.graphics.getWidth() - sprite.getWidth()));
         position.y = Math.max(0, Math.min(position.y, Gdx.graphics.getHeight() - sprite.getHeight()));
 
-        // Effectue le déplacement
+        // Effectue le déplacement du sprite
         sprite.setPosition(position.x, position.y);
 
-        // Tirs
+        // Gestion des tirs
         timeSinceLastShot += Gdx.graphics.getDeltaTime();
-
         if ((Gdx.input.isKeyPressed(RED_KEY) || Gdx.input.isKeyPressed(YELLOW_KEY) || Gdx.input.isKeyPressed(BLUE_KEY))
                 && timeSinceLastShot >= RATE_OF_FIRE) {
+
+            // Mélange les couleurs des inputs
             ColorUtils.Color color = ColorUtils.Color.WHITE;
             if (Gdx.input.isKeyPressed(RED_KEY)) {
                 color = ColorUtils.add(color, ColorUtils.Color.RED);
@@ -130,8 +137,10 @@ public class Player implements Entity {
                 color = ColorUtils.add(color, ColorUtils.Color.BLUE);
             }
 
+            // Ajoute le tir aux entités actives
             EntityManager.getInstance().addEntity(new Shot(new Vector2(position.x + SIZE, position.y + SIZE / 2), color));
 
+            // Réinitialise le temps depuis le dernier tir
             timeSinceLastShot = 0;
         }
 
@@ -139,6 +148,7 @@ public class Player implements Entity {
 
     @Override
     public boolean isMarkedForRemoval() {
+        // le joueur n'est retiré du jeu que lorsqu'il est mort
         return dead;
     }
 

@@ -28,9 +28,6 @@ public class CoR extends ApplicationAdapter {
     public void create() {
         batch = new SpriteBatch();
 
-        // création du joueur
-        EntityManager.getInstance().addEntity(new Player(100, Gdx.graphics.getHeight() / 2));
-
         // on récupère les fichiers de musique (.mp3)
         playList = new ArrayList<Music>();
         FileHandle dir = Gdx.files.internal("music");

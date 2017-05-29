@@ -15,9 +15,9 @@ import java.util.Random;
  * @brief
  */
 public class Satellite implements ReactionHandler, Entity {
-    private static final float SPEED = 150;
-    private static final float MAX_ROTATION_SPEED = 100; // degrés par sec
-    private static final Vector2 SIZE = new Vector2(50, 50);
+    private static final float SPEED = 150; // en pixels/s
+    private static final float MAX_ROTATION_SPEED = 100; // en degrés par sec
+    private static final Vector2 SIZE = new Vector2(50, 50); // en pixels
     private static final int POINT_VALUE = 20;
     private static Texture texture = new Texture(Gdx.files.internal("satellite.png"));
     private Sprite sprite = new Sprite(texture);
@@ -59,7 +59,6 @@ public class Satellite implements ReactionHandler, Entity {
     public void handleReaction(Reaction reaction) {
         reaction.addLink(position);
         if (reaction.getColor() == ColorUtils.Color.BLACK) {
-            Random r = new Random();
             isOut = true;
 
             ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
@@ -76,6 +75,14 @@ public class Satellite implements ReactionHandler, Entity {
                 EntityManager.getInstance().addPoints(POINT_VALUE);
                 EntityManager.getInstance().addEntity(new Explosion(position,ColorUtils.Color.BLACK));
             }
+        } else if(reaction.getColor() == ColorUtils.Color.WHITE) {
+            isOut = true;
+            ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
+            if (nearest != null) {
+                reaction.setColor(ColorUtils.Color.WHITE);
+                nearest.handleReaction(reaction);
+            }
+            isOut = false;
         }
     }
 

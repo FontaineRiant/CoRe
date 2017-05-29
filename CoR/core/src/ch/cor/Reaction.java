@@ -32,7 +32,6 @@ public class Reaction implements Entity {
         sprites.add(new Sprite(texture));
         sprites.getLast().setColor(color.getValue());
         links.add(new Vector2(coord));
-        update();
     }
 
     @Override
@@ -80,6 +79,9 @@ public class Reaction implements Entity {
 
     public void setColor(ColorUtils.Color color) {
         this.color = color;
+        if(!sprites.isEmpty()) {
+            sprites.getLast().setColor(color.getValue());
+        }
     }
 
     public int getReactionSize() {

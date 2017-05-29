@@ -14,10 +14,12 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Player implements Entity {
     private final static float MAX_SPEED = 1000; // en pixels/sec
-    private final static float ACCELERATION = 5000; // en pixels/sec^2
-    private final static float INERTIA = 3000; // en pixels/sec^2
+    private final static float ACCELERATION = 4000; // en pixels/sec^2
+    private final static float DECELERATION = 3000; // en pixels/sec^2
     private final static float SIZE = 40; // en pixels
     private final static float RATE_OF_FIRE = 0.15f; // secondes entre 2 tirs
+
+    // contrôles
     private final static int RED_KEY = Input.Keys.J;
     private final static int YELLOW_KEY = Input.Keys.K;
     private final static int BLUE_KEY = Input.Keys.L;
@@ -41,9 +43,9 @@ public class Player implements Entity {
     }
 
     private float applyInertia(float speed) {
-        float dec = INERTIA * Math.signum(speed) * Gdx.graphics.getDeltaTime();
+        float dec = DECELERATION * Math.signum(speed) * Gdx.graphics.getDeltaTime();
         if (Math.abs(speed) > Math.abs(dec)) {
-            return speed - INERTIA * Math.signum(speed) * Gdx.graphics.getDeltaTime();
+            return speed - DECELERATION * Math.signum(speed) * Gdx.graphics.getDeltaTime();
         } else {
             return 0;
         }

@@ -61,7 +61,7 @@ public class ColorUtils {
     /**
      * @return Color une couleur chaude aléatoire
      */
-    public static Color getRandomNWarmColor() {
+    public static Color getRandomWarmColor() {
         return Color.values()[random.nextInt(3)+1];
     }
 

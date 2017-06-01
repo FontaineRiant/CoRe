@@ -68,7 +68,7 @@ public class Spawner {
 
             // tente de faire apparaitre un astéroide
             if (random.nextDouble() < rockSpawnChance) {
-                EntityManager.getInstance().addEntity(new Rock(spawnType == State.WARM ? ColorUtils.getRandomNWarmColor() : ColorUtils.getRandomColdColor()));
+                EntityManager.getInstance().addEntity(new Rock(spawnType == State.WARM ? ColorUtils.getRandomWarmColor() : ColorUtils.getRandomColdColor()));
             }
 
             // réinitialise le temps depuis le dernier spawn

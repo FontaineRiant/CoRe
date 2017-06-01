@@ -80,7 +80,7 @@ public class Satellite implements ReactionHandler, Entity {
             // envoie 2 couleurs aléatoires (une chaude et une froide) au handler le plus proche
             ReactionHandler nearest = EntityManager.getInstance().getNearestHandler(position);
             if (nearest != null) {
-                reaction.setColor(ColorUtils.getRandomNWarmColor());
+                reaction.setColor(ColorUtils.getRandomWarmColor());
                 nearest.handleReaction(reaction);
                 reaction.setColor(ColorUtils.getRandomColdColor());
                 nearest.handleReaction(reaction);

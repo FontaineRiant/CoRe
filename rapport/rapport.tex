@@ -103,21 +103,37 @@ Dans le cas de CoRe, il n'y a qu'une seule plateforme ciblée : desktop. La clas
 La classe CoR (dont le nom est laissé au choix du développeur) contient la boucle d'exécution du jeu. La méthode create est appelée au démarrage, puis la méthode render est appelée à chaque rendu d'un image du jeu (60 fois par seconde par défaut). La méthode dispose est appelée à la fermeture du programme. Le développeur est libre de faire ce qu'il veut dans le corps de ces méthodes.
 
 \subsection{Structure générale}
-structure générale
-justifier la duplication de code
+EntityManager est un singleton qui contient et gère toutes les entités affichables en jeu. Ses méthodes updateAll et drawAll sont appelées 60 fois par seconde, et consistent à mettre à jour et dessiner toutes les entités présentes en jeu en appelant les méthodes update et draw de l'interface Entity. Toutes les entités implémentent donc Entity. Les entités pouvant faire partie d'une chaîne de responsabilité (réaction en chaîne) implémentent ReactionHandler.\\
 
-\clearpage
+EntityManager possède également un objet Spawner qui, à chaque mise à jour, génère des entités. A chaque fois qu'une entité est créée (par Spawner ou même une autre entité), elle doit être ajoutée à la liste d'entités de EntityManager.\\
+
+Certaines entités partagent des attributs et ont des comportements très similaires. Nous avons cependant décidé de ne pas factoriser le code en implémentant une superclasse pour deux raisons :\\
+
+Premièrement, afin de proposer une bonne démonstration du modèle de conception chaîne de responsabilité, il a été jugé préférable de ne pas lier ces entités par héritage. Ce cette manière, nous disposons bien d'objets de natures différentes dans notre chaîne de responsabilité, plutôt que de n'avoir que des objets héritant d'une unique classe "Obstacle".\\
+
+Deuxièmement, ces entités ne se ressemblent pas au niveau conceptuel. Un satellite tourne sur lui même de la même façon qu'un astéroïde, mais il pourrait aussi bien avancer en zigzag car rien ne lie leur comportement. Cette ressemblance est donc d'avantage le fruit du hasard qu'un lien de parenté entre ces entités.
 \section{Diagramme de classes}
-\includegraphics[scale=0.35,angle=90,origin=c]{uml_cor.jpg}
+\includegraphics[scale=0.38,angle=90,origin=c]{uml_cor.jpg}
 \clearpage
 \section{Patrons de conception}
 \subsection{Chaîne de responsabilité}
+Les maillons de la chaîne de responsabilités sont les entités implémentant l'interface ReactionHandler. La requête qui est passée d'un maillon à l'autre est un objet de type Reaction.\\
+
+ReactionHandler déclare les méthodes handleReaction (qui reçoit la requête) et getBounds (qui est nécessaire pour détecter une collision avec un élément de la chaîne). Lorsqu'un projectile entre en collision avec un ReactionHandler, il créé un objet Reaction, l'ajoute à l'EntityManager, puis l'envoie au ReactionHandler touché par le projectile.\\
+
+La Reaction est passée de ReactionHandler en ReactionHandler. Elle peut être modifiée (longueur, couleur, aspect graphique), exploser/endommager un ReactionHandler, ou arrêtée (plus d'objet à l'écran ou couleur incompatible).
 
 \subsection{Singleton}
-EntityManager
+Il a été décidé qu'EntityManager soit un singleton afin de permettre à n'importe quelle classe d'ajouter des entités à la boucle d'exécution du jeu. Elle permet également d'obtenir le ReactionHandler le plus proche d'une coordonnée spécifiée. La fin de vie d'une entité est signalée par cette dernière en renvoyant \textit{true} à l'appel de isMarkedForRemoval. C'est une façon simple de créer des entités, les faire vivre et mourir, sans avoir à gérer de multiples boucles d'exécutions interdépendantes (comme c'était le cas lors d'une première implémentation).
+
 \subsection{Classe utilitaire}
-ColorUtils : Abstraction de Color et mélanges/génération de couleur.
+ColorUtils est une classe utilitaire permettant de manipuler des objets du type énuméré Color. Comme ces manipulations sont sans états, et que toutes les valeurs reçues et renvoyées sont des constantes, nous avons décidé de rendre le constructeur privé et de ne pas forcer le paradigme objet sur cette classe.\\
+
+Chaque élément de ce type prend une valeur de type com.badlogic.gdx.graphics.Color (Color définit par libgdx). Cette abstraction permet de définir des méthodes sur ces couleurs indépendamment de la couleur réelle affichée à l'écran. Par exemple BLUE et RED font PURPLE, mais les couleurs affichées sont CYAN, RED et VIOLET. Grâce à cette abstraction, ce mélange de couleur reste vrai même si on change la valeur de BLUE de CYAN à SKY.\\
+
+ColorUtils possède donc des méthodes statiques pour mélanger deux couleurs, renvoyer une couleur aléatoire, ou savoir si une couleur est contenue dans une autre par mélange (cette dernière méthode n'est pas utilisée dans la version finale du jeu).
 
 \section{Conclusion}
+Bien que l'implémentation d'une chaîne de responsabilité dans le jeu était l'objectif principal du projet, deux patrons de conception supplémentaires se sont naturellement glissés dans le code, contribuant à la clarté de la structure du programme. Cette dernière est restée simple car le jeu lui-même est minimaliste et quatre autres projets requéraient également du temps de travail.
 
 \end{document}

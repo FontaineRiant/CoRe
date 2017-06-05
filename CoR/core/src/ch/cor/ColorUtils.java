@@ -1,5 +1,7 @@
 package ch.cor;
 
+import com.badlogic.gdx.graphics.Color;
+
 import java.util.Random;
 
 
@@ -42,6 +44,8 @@ public class ColorUtils {
             return color;
         }
     }
+
+    private ColorUtils(){}
 
     /**
      * Retourne une couleur du jeu aléatoire qui n'est ni noire ni blanche

@@ -4,19 +4,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% ENCODAGES, LANGUES, AMS ET AUTRES 
+% ENCODAGES, LANGUES, AMS ET AUTRES
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-\usepackage[T1]{fontenc} 
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english,frenchb]{babel}
 %
-\frenchbsetup{StandardLists=true} 
+\frenchbsetup{StandardLists=true}
 \usepackage{enumitem}
 \usepackage{xspace}
-\usepackage{amssymb,mathtools,pifont} 
+\usepackage{amssymb,mathtools,pifont}
 \usepackage{xcolor}
 \usepackage{graphicx}
 
@@ -32,8 +32,8 @@
 \usepackage[noend]{algpseudocode}
 %
 \floatname{algorithm}{Algorithme}
-\algrenewcommand\algorithmicrequire{\textbf{Données :}}
-\algrenewcommand\algorithmicensure{\textbf{Résultat :}}
+\algrenewcommand\algorithmicrequire{\textbf{Données:}}
+\algrenewcommand\algorithmicensure{\textbf{Résultat:}}
 %
 \algnewcommand\algorithmicto{\textbf{to}}
 \algrenewtext{For}[3]{\algorithmicfor\ #1 $\gets$ #2 \algorithmicto\ #3 \algorithmicdo}
@@ -51,7 +51,7 @@
 \usepackage[hcentering=true,nomarginpar,textwidth=426.8pt,textheight=650.2pt,headheight=24pt]{geometry}
 %
 \usepackage{fancyhdr}
-\fancypagestyle{plain}{
+\fancypagestyle{plain}{%
 	\fancyhf{}
 	\renewcommand{\headrulewidth}{0pt}
 	\renewcommand{\footrulewidth}{0pt}}
@@ -79,14 +79,14 @@ Valentin \bsc{Finini}}
 \tableofcontents
 \clearpage
 \section{Introduction}
-CoRe est un projet dont l'objectif est de démontrer une implémentation du patron de conception "chaîne de responsabilité" dans une application ludique.
+CoRe est un projet dont l'objectif est de démontrer une implémentation du patron de conception ``chaîne de responsabilité'' dans une application ludique.
 
 \section{Le jeu}
-CoRe (pour "Chain of Responsability") est un jeu de type \textit{shoot 'em up} à défilement horizontal. Le joueur pilote un vaisseau qui avance à vitesse constante vers la droite, tandis que des obstacles à éviter viennent dans le sens opposé. Le joueur peut tirer des projectiles pour détruire ces obstacles.\\
+CoRe (pour ``Chain of Responsability'') est un jeu de type \textit{shoot'em up} à défilement horizontal. Le joueur pilote un vaisseau qui avance à vitesse constante vers la droite, tandis que des obstacles à éviter viennent dans le sens opposé. Le joueur peut tirer des projectiles pour détruire ces obstacles.\\
 
 Pour tirer un projectile, il faut appuyer sur les touches J, K ou L. Chacune de ces touches tirent une couleur différente, et il est possible des mélanger ces couleurs pour en créer de nouvelles. Les trois couleurs à la fois produisent du noir.\\
 
-Afin de détruire un astéroïde, il faut tirer dessus avec la couleur qui lui correspond. S'il explose, une réaction en chaîne (gérée par le patron chaîne de responsabilité) est déclenchée. Dans ce cas, l'objet le plus proche est lui aussi touché par la même couleur. Il peut alors exploser à son tour, et ainsi de suite ...\\
+Afin de détruire un astéroïde, il faut tirer dessus avec la couleur qui lui correspond. S'il explose, une réaction en chaîne (gérée par le patron chaîne de responsabilité) est déclenchée. Dans ce cas, l'objet le plus proche est lui aussi touché par la même couleur. Il peut alors exploser à son tour, et ainsi de suite \ldots\\
 
 Afin de détruire un bloc de glace, il faut qu'il soit touché par une réaction en chaîne de n'importe quelle couleur. Tirer dessus directement n'a pas d'effet. Lorsqu'il explose, il transforme la couleur reçue en blanc avant de continuer la réaction en chaîne. Le blanc détruit les astéroïdes de n'importe quelle couleur, ce qui a pour effet de faire exploser tous les astéroïdes de l'écran.\\
 
@@ -94,11 +94,13 @@ Les satellites ne réagissent que lorsqu'ils reçoivent du noir, lançant deux r
 
 Afin de ne pas rendre les réactions en chaîne trop rares, il a été décidé de faire en sorte que les astéroïdes apparaissent par groupe de couleur chaudes ou froides. Il y a donc plus de chance d'avoir deux objets adjacents de la même couleur que si leur couleur était parfaitement aléatoire. La difficulté du jeu croît à mesure que le temps passe (de plus en plus d'obstacles apparaissent), et un score est affiché comme indicateur de la performance du joueur.
 
+\clearpage
+
 \section{Implémentation}
 \subsection{Libgdx}
 Libgdx\footnote{https://libgdx.badlogicgames.com/} est un ensemble de librairies open-source et sous licence Apache 2.0. Il forme un framework minimaliste qui n'impose quasiment aucune structure ou classe au programmeur. Si le projet est correctement configuré, il est possible d'exécuter la même application sur desktop, IOS, Android et navigateur (HTML5).\\
 
-Dans le cas de CoRe, il n'y a qu'une seule plateforme ciblée : desktop. La classe DesktopLauncher contient la méthode main, ainsi que les configurations de base pour lancer l'application (taille et titre de base de la fenêtre, par exemple). La boucle d'exécution est alors lancée.\\
+Dans le cas de CoRe, il n'y a qu'une seule plateforme ciblée: desktop. La classe DesktopLauncher contient la méthode main, ainsi que les configurations de base pour lancer l'application (taille et titre de base de la fenêtre, par exemple). La boucle d'exécution est alors lancée.\\
 
 La classe CoR (dont le nom est laissé au choix du développeur) contient la boucle d'exécution du jeu. La méthode create est appelée au démarrage, puis la méthode render est appelée à chaque rendu d'un image du jeu (60 fois par seconde par défaut). La méthode dispose est appelée à la fermeture du programme. Le développeur est libre de faire ce qu'il veut dans le corps de ces méthodes.
 
@@ -107,14 +109,17 @@ EntityManager est un singleton qui contient et gère toutes les entités afficha
 
 EntityManager possède également un objet Spawner qui, à chaque mise à jour, génère des entités. A chaque fois qu'une entité est créée (par Spawner ou même une autre entité), elle doit être ajoutée à la liste d'entités de EntityManager.\\
 
-Certaines entités partagent des attributs et ont des comportements très similaires. Nous avons cependant décidé de ne pas factoriser le code en implémentant une superclasse pour deux raisons :\\
+Certaines entités partagent des attributs et ont des comportements très similaires. Nous avons cependant décidé de ne pas factoriser le code en implémentant une superclasse pour deux raisons:\\
 
-Premièrement, afin de proposer une bonne démonstration du modèle de conception chaîne de responsabilité, il a été jugé préférable de ne pas lier ces entités par héritage. Ce cette manière, nous disposons bien d'objets de natures différentes dans notre chaîne de responsabilité, plutôt que de n'avoir que des objets héritant d'une unique classe "Obstacle".\\
+Premièrement, afin de proposer une bonne démonstration du modèle de conception chaîne de responsabilité, il a été jugé préférable de ne pas lier ces entités par héritage. Ce cette manière, nous disposons bien d'objets de natures différentes dans notre chaîne de responsabilité, plutôt que de n'avoir que des objets héritant d'une unique classe ``Obstacle''.\\
 
 Deuxièmement, ces entités ne se ressemblent pas au niveau conceptuel. Un satellite tourne sur lui même de la même façon qu'un astéroïde, mais il pourrait aussi bien avancer en zigzag car rien ne lie leur comportement. Cette ressemblance est donc d'avantage le fruit du hasard qu'un lien de parenté entre ces entités.
 \section{Diagramme de classes}
-\includegraphics[scale=0.38,angle=90,origin=c]{uml_cor.jpg}
+
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio,angle=90,origin=c]{uml_cor.jpg}
+
 \clearpage
+
 \section{Patrons de conception}
 \subsection{Chaîne de responsabilité}
 Les maillons de la chaîne de responsabilités sont les entités implémentant l'interface ReactionHandler. La requête qui est passée d'un maillon à l'autre est un objet de type Reaction.\\
@@ -129,9 +134,11 @@ Il a été décidé qu'EntityManager soit un singleton afin de permettre à n'im
 \subsection{Classe utilitaire}
 ColorUtils est une classe utilitaire permettant de manipuler des objets du type énuméré Color. Comme ces manipulations sont sans états, et que toutes les valeurs reçues et renvoyées sont des constantes, nous avons décidé de rendre le constructeur privé et de ne pas forcer le paradigme objet sur cette classe.\\
 
-Chaque élément de ce type prend une valeur de type com.badlogic.gdx.graphics.Color (Color définit par libgdx). Cette abstraction permet de définir des méthodes sur ces couleurs indépendamment de la couleur réelle affichée à l'écran. Par exemple BLUE et RED font PURPLE, mais les couleurs affichées sont CYAN, RED et VIOLET. Grâce à cette abstraction, ce mélange de couleur reste vrai même si on change la valeur de BLUE de CYAN à SKY.\\
+Chaque élément de ce type prend une valeur de type \textt{com.badlogic.gdx.graphics.Color} (Color définit par libgdx). Cette abstraction permet de définir des méthodes sur ces couleurs indépendamment de la couleur réelle affichée à l'écran. Par exemple BLUE et RED font PURPLE, mais les couleurs affichées sont CYAN, RED et VIOLET. Grâce à cette abstraction, ce mélange de couleur reste vrai même si on change la valeur de BLUE de CYAN à SKY.\\
 
 ColorUtils possède donc des méthodes statiques pour mélanger deux couleurs, renvoyer une couleur aléatoire, ou savoir si une couleur est contenue dans une autre par mélange (cette dernière méthode n'est pas utilisée dans la version finale du jeu).
+
+\clearpage
 
 \section{Conclusion}
 Bien que l'implémentation d'une chaîne de responsabilité dans le jeu était l'objectif principal du projet, deux patrons de conception supplémentaires se sont naturellement glissés dans le code, contribuant à la clarté de la structure du programme. Cette dernière est restée simple car le jeu lui-même est minimaliste et quatre autres projets requéraient également du temps de travail.

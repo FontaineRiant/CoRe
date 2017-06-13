@@ -113,3 +113,10 @@ gradle-app.setting
 
 # End of https://www.gitignore.io/api/java,maven,gradle,intellij+iml
 
+# Fucking latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc

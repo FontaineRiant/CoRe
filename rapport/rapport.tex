@@ -100,7 +100,7 @@ Afin de ne pas rendre les réactions en chaîne trop rares, il a été décidé 
 \subsection{Libgdx}
 Libgdx\footnote{https://libgdx.badlogicgames.com/} est un ensemble de librairies open-source et sous licence Apache 2.0. Il forme un framework minimaliste qui n'impose quasiment aucune structure ou classe au programmeur. Si le projet est correctement configuré, il est possible d'exécuter la même application sur desktop, IOS, Android et navigateur (HTML5).\\
 
-Dans le cas de CoRe, il n'y a qu'une seule plateforme ciblée: desktop. La classe DesktopLauncher contient la méthode main, ainsi que les configurations de base pour lancer l'application (taille et titre de base de la fenêtre, par exemple). La boucle d'exécution est alors lancée.\\
+Dans le cas de CoRe, il n'y a qu'une seule plateforme ciblée: desktop. La classe \texttt{DesktopLauncher} contient la méthode \texttt{main}, ainsi que les configurations de base pour lancer l'application (taille et titre de base de la fenêtre, par exemple). La boucle d'exécution est alors lancée.\\
 
 La classe principale (dont le nom est laissé au choix du développeur, ici \texttt{CoRe}) contient la boucle d'exécution du jeu. La méthode \texttt{create} est appelée au démarrage, puis la méthode \texttt{render} est appelée à chaque rendu d'un image du jeu (60 fois par seconde par défaut). La méthode \texttt{dispose} est appelée à la fermeture du programme. Le développeur est libre de faire ce qu'il veut dans le corps de ces méthodes.
 
@@ -125,7 +125,7 @@ Deuxièmement, ces entités ne se ressemblent pas au niveau conceptuel. Un satel
 \subsection{Chaîne de responsabilité}
 Les maillons de la chaîne de responsabilités sont les entités implémentant l'interface \texttt{ReactionHandler}. La requête qui est passée d'un maillon à l'autre est un objet de type \texttt{Reaction}.\\
 
-\texttt{ReactionHandler} déclare les méthodes \texttt{handleReaction} (qui reçoit la requête) et \texttt{getBounds} (qui est nécessaire pour détecter une collision avec un élément de la chaîne). Lorsqu'un projectile entre en collision avec un \texttt{ReactionHandler}, il créé un objet Reaction, l'ajoute à l'EntityManager, puis l'envoie au \texttt{ReactionHandler} touché par le projectile.\\
+\texttt{ReactionHandler} déclare les méthodes \texttt{handleReaction} (qui reçoit la requête) et \texttt{getBounds} (qui est nécessaire pour détecter une collision avec un élément de la chaîne). Lorsqu'un projectile entre en collision avec un \texttt{ReactionHandler}, il créé un objet \texttt{Reaction}, l'ajoute à l'\texttt{EntityManager}, puis l'envoie au \texttt{ReactionHandler} touché par le projectile.\\
 
 La \texttt{Reaction} est passée de \texttt{ReactionHandler} en \texttt{ReactionHandler}. Elle peut être modifiée (longueur, couleur, aspect graphique), exploser/endommager un \texttt{ReactionHandler}, ou arrêtée (plus d'objet à l'écran ou couleur incompatible).
 
